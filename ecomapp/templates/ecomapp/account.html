@@ -1,0 +1,152 @@
+{% extends "ecomapp/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+
+
+{% block page_content %}
+	{% if not request.user.first_name %}
+		<h2 class="text-center mb-5">Личный кабинет пользователя {{ request.user }}</h2>
+	{% else %}
+		<h2 class="text-center mb-5">Личный кабинет пользователя {{ request.user.first_name }}</h2>
+	{% endif %}
+	<div class="row mb-3">
+		<div class="col-lg-6 text-left">
+			<img src="{{ user.profile.image.url }}" class="img-fluid avatar">
+			<p class="m-0">Пользователь: {{ request.user }}</p>
+			<!--{% if request.user.email %}
+				<p class="m-0">E-mail: {{ request.user.email }}</p>
+			{% endif %}-->
+			<p class="m-0">
+				Имя: {{ request.user.first_name }} 
+				{% if request.user.last_name %} 
+					{{ request.user.last_name }} 
+				{% endif %}
+			</p>
+			<form method="POST" enctype="multipart/form-data" class="position-relative avatar-form">
+				{% csrf_token %}
+				{{ image_profile|crispy }}
+			</form>
+		</div>
+		<div class="col-lg-6 m-auto">
+			<p class="text-right m-0 p-0">
+				<a href="{% url 'account_change_password' %}" class="btn btn-info btn-sm">Сменить пароль</a>
+				<a href="{% url 'account_email' %}" class="btn btn-info btn-sm change-mail-btn">Сменить e-mail</a>
+			</p>
+		</div>
+	</div>
+	
+
+	{% if order %}
+		<div class="table-responsive">
+			<table class="table table-striped my-2">
+			    <thead>
+				    <tr>
+				      <th class="text-center" scope="col">Номер заказа</th>
+				      <th class="text-center" scope="col">Дата заказа</th>
+				      <th class="text-center" scope="col">Статус заказа</th>
+				      <th class="text-center" scope="col">Стоимость заказа</th>
+				      <th class="text-center" scope="col">Детали заказа</th>
+				    </tr>
+			    </thead>
+				{% for order_item in order %}
+					{# {% for order_item in product_in_order %} #}
+					
+					<tbody>
+				    	<tr>
+				    		<td class="text-center order-item-id">{{ order_item.id }}</td>
+				    		<td class="text-center">{{ order_item.date_created}}</td>
+				    		<td class="text-center">{{ order_item.status }}</td>
+				    		<td class="text-center">{{ order_item.total|intcomma }} руб.</td>
+				    		<td class="text-center">
+				    			<!-- Button trigger modal -->
+								<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exampleModalScrollable-{{ order_item.id }}">
+								  Детали заказа
+								</button>
+
+								<!-- Modal -->
+								<div class="modal fade text-left" id="exampleModalScrollable-{{ order_item.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+								  <div class="modal-dialog modal-dialog-scrollable" role="document">
+								    <div class="modal-content">
+								      <div class="modal-header">
+								        <h5 class="modal-title" id="exampleModalScrollableTitle">
+								        	Заказ № {{ order_item.ref_code }}
+								        </h5>
+								        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								          <span aria-hidden="true">&times;</span>
+								        </button>
+								      </div>
+								      <div class="modal-body">
+								        <h3 class="mb-3">Товар:</h3>
+								        <div class="table-responsive">
+											<table class="table table-striped">
+											  <tbody>
+										    	{% for product_in_order in products_in_order %}
+											    	<tr>
+											    		<td>
+											    			{{ product_in_order.product.title }}
+											    		</td>
+											    		<td>
+											    			{{ product_in_order.quantity }} шт.
+											    		</td>
+											    		<td>
+											    			{{ product_in_order.all_items_cost|intcomma }} руб.
+											    		</td>
+											    	</tr>
+											    {% endfor %}
+											    	<tr>
+											    		<td></td>
+											    		<td>Итого:</td>
+											    		<td>
+											    			<strong>
+											    				{{ order_item.total|intcomma }} руб.
+											    			</strong>
+											    		</td>
+											    	</tr>	
+											  </tbody>
+											</table>
+										</div>
+
+										<h3>Заказчик:</h3>
+										<p><strong>Имя:</strong> {{ order_item.first_name }}</p>
+										{% if order_item.last_name %}
+											<p><strong>Фамилия:</strong> {{ order_item.last_name }}</p>
+										{% endif %}
+										<p><strong>Телефон:</strong> {{ order_item.phone }}</p>
+
+										<h3>Доставка:</h3>
+										<p><strong>Способ получения:</strong> {{ order_item.buying_type }}</p>
+										{% if order_item.address %}
+											<p><strong>Адрес доставки:</strong> {{ order_item.address }}</p>
+										{% endif %}
+										
+										<p><strong>Дата доставки:</strong> {{ order_item.date_delivery }}</p>
+										
+										{% if order_item.comments %}
+											<h3>Комментарии к заказу:</h3>
+											<p>{{ order_item.comments }}</p>
+										{% endif %}
+
+								      </div>
+								      <div class="modal-footer">
+								        <button type="button" class="btn btn-secondary close-modal-btn" data-dismiss="modal">Закрыть</button>
+								      </div>
+								    </div>
+								  </div>
+								</div>
+				    		</td>
+				    	</tr>	
+					</tbody>
+					{# {% endfor %} #}	
+		  		{% endfor %}
+			</table>
+		</div>
+	{% else %}
+		<hr>
+		<img src="{% static 'img/empty-cart.png' %}" class="empty-cart">
+		<h3 class="text-center my-5">Пока вы не сделали ни одного заказа.</h3>
+		<p>Но это легко поправить! <a href="{% url 'account_login' %}?next=/">Войдите</a> в свой аккаунт или <a href="{% url 'account_signup' %}?next=/">зарегстрируйтесь </a> и отправлятесь за <a href="/">покупками</a>! После оформления ваш заказ отобразится в <a href="{% url 'ecomapp:account' %}">личном кабинете</a> и вы сможете посмотреть детали заказа.</p>
+	{% endif %}
+{% endblock page_content %}
+
+	

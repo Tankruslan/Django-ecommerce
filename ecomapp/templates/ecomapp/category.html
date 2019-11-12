@@ -1,0 +1,13 @@
+{% extends "ecomapp/base.html" %}
+
+
+{% block page_content %}
+	<h2 class="text-center">{{ category.name }}</h2>
+	<hr class="mb-4">
+	<div class="row">
+		{% for product in products_of_category %}
+			{% include "ecomapp/product_item.html" %}
+		{% endfor %}
+	</div>
+	{% include "ecomapp/pagination_in_category.html" %}
+{% endblock page_content %}

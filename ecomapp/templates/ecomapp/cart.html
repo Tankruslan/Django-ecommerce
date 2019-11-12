@@ -1,0 +1,154 @@
+{% extends "ecomapp/base.html" %}
+{% load static %}
+{% load humanize %}
+
+
+{% block page_content %}
+	{% if cart.items.count > 0 %}
+		<div class="my-cart">
+			<h2 class="text-center">Ваша корзина</h2>
+			<br>
+			<div class="table-responsive">
+				<table class="table table-striped">
+				  <thead>
+				    <tr>
+				      <th class="text-center cart-table-info"></th>
+				      <th class="text-center cart-table-info" scope="col">Товар</th>
+				      <th class="text-center cart-table-info" scope="col">Количество, шт.</th>
+				      <th class="text-center cart-table-info" scope="col">Стоимость за единицу</th>
+				      <th class="text-center cart-table-info" scope="col">Общая стоимость</th>
+				      <th class="text-center cart-table-info" scope="col">Удалить?</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+			    	{% for cart_item in cart.items.all %}
+				    	<tr class="text-left cart-item-{{ cart_item.product.id }}">
+				    		{% for image_item in cart_item.product.productimage_set.all %}
+        						{% if image_item.is_main %}
+				    				<td class="text-center cart-table-info">
+				    					<img src="{{ image_item.image.url }}" class="img-fluid image-in-cart">
+				    				</td>
+				    		 	{% endif %}
+				    		{% endfor %}
+				    		<td class="text-center cart-table-info">
+				    			{{ cart_item.product.title }}
+				    		</td>
+				    		<td class="text-center cart-table-info">
+				    			<form method="GET">
+				    				<div id="{{ cart_item.id }}" class="outside">
+				    					<input class="cart-item-quantity" type="number" name="quantity" value="{{ cart_item.quantity }}" min="1" data-id='{{ cart_item.id }}'>
+				    				</div>
+				    			</form>
+				    		</td>
+				    		<td class="text-center cart-table-info">
+				    			{{ cart_item.item_cost|intcomma }} руб.
+				    		</td>
+				    		<td class="text-center cart-table-info" id="cart-item-total-{{ cart_item.id }}">
+				    			{{ cart_item.all_items_cost|intcomma }} руб.
+				    		</td>
+				    		<td class="text-center cart-table-info">
+				    			<button data-slug='{{ cart_item.product.slug }}' data-id="{{ cart_item.product.id }}" class="remove-from-cart-btn confirm-delete" title="Удалить этот товар">
+				    				<i class="fas fa-trash"></i>
+				    			</button>
+				    		</td>
+				    	</tr>
+			    	{% endfor %}
+			    	<tr class="cart-order-total-price">
+			    		<td></td>
+			    		<td></td>
+			    		<td></td>
+			    		<td class="text-center"><strong>Итого:</strong></td>
+			    		<td class="text-center" id="cart-total-price">
+			    			<strong>{{ cart.cart_total_cost|intcomma }} руб.</strong>
+			    		</td>
+			    		<td></td>
+			    	</tr>
+				  </tbody>
+				</table>
+			</div>
+			<br>
+			<p class="text-right">
+				{% if user.is_authenticated %}
+					<a href="{% url 'ecomapp:create_order' %}" class="btn btn-success my-4">
+						Заказать
+					</a>
+				{% else %}
+					<p>Заказывать товары могут только авторизованные пользователи. Пожалуйста, <a href="{% url 'account_signup' %}?next=/cart/">зарегистрируйтесь</a> или <a href="{% url 'account_login' %}?next=/cart/">войдите</a> в свой аккаунт для продолжения.</p>
+				{% endif %}
+            </p>
+		</div>
+		{% else %}
+			<img src="{% static 'img/empty-cart.png' %}" class="empty-cart">
+			<h3 class="text-center my-5">Ваша корзина пуста!</h3>
+			<p>Но это легко поправить! <a href="{% url 'account_login' %}?next=/">Войдите</a> в свой аккаунт или <a href="{% url 'account_signup' %}?next=/">зарегстрируйтесь </a> и отправлятесь за <a href="/">покупками</a>! После оформления ваш заказ отобразится в <a href="{% url 'ecomapp:account' %}">личном кабинете</a> и вы сможете посмотреть детали заказа.</p>
+	{% endif %}
+{% endblock page_content %}
+
+{% block page_scripts %}
+  <script>
+  	$('.cart-item-quantity').each(function () {
+	  $(this).number({
+	  	'containerClass' : 'number-style',
+		'minus' : 'number-minus',
+		'plus' : 'number-plus',
+	    'containerTag' : 'div',
+		'btnTag' : 'span'
+	  });
+	});
+  </script>
+  <!-- Changing item's quantity in the cart -->
+  <script>
+    $(document).ready(function(){
+      $('.cart-item-quantity').on('change', function(){
+        quantity = $(this).val()
+        item_id = $(this).attr('data-id')
+        data = {
+          quantity: quantity,
+          item_id: item_id,
+        }
+        $.ajax({
+          type: "GET",
+          url: '{% url "ecomapp:change_item_quantity" %}',
+          data: data,
+          success: function(data){
+            $('#cart-item-total-'+item_id).html(parseFloat(data.all_items_cost).toLocaleString(undefined, {'minimumFractionDigits':2,'maximumFractionDigits':2}) + ' руб.'
+              )
+            $('#cart-total-price').children('strong').html(
+              parseFloat(data.cart_total_price).toLocaleString(undefined,
+                {'minimumFractionDigits':2,'maximumFractionDigits':2}) + ' руб.'
+              )
+          }
+        })
+      });
+
+      $('.number-minus, .number-plus').on('click', function(){
+      	{% for cart_item in cart.items.all %}
+      		quantity = $('.cart-item-quantity').val()
+	        item_id = $('.cart-item-quantity').attr('data-id')
+	        console.log(quantity)
+	        console.log(item_id)
+      	{% endfor %}
+
+        data = {
+          quantity: quantity,
+          item_id: item_id,
+        }
+        $.ajax({
+          type: "GET",
+          url: '{% url "ecomapp:change_item_quantity" %}',
+          data: data,
+          success: function(data){
+            $('#cart-item-total-'+item_id).html(parseFloat(data.all_items_cost).toLocaleString(undefined, {'minimumFractionDigits':2,'maximumFractionDigits':2}) + ' руб.'
+              )
+            $('#cart-total-price').children('strong').html(
+              parseFloat(data.cart_total_price).toLocaleString(undefined,
+                {'minimumFractionDigits':2,'maximumFractionDigits':2}) + ' руб.'
+              )
+          }
+        })
+      })
+    });
+  </script>
+
+
+{% endblock page_scripts %}

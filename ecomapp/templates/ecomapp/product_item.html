@@ -1,0 +1,63 @@
+{% load static %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+
+<div class="col-lg-4 col-md-6 mb-4 text-left">
+  <div class="card h-100">
+    <a href="{% url 'ecomapp:product_detail' product.slug %}">
+      {% for image_item in product.productimage_set.all %}
+        {% if image_item.is_main %}
+          <img class="card-img-top img-fluid pt-3" src="{{ image_item.image.url }}">
+        {% endif %}
+      {% endfor %}
+    </a>
+    <div class="card-body">
+      <h4 class="card-title product-title">
+        <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+      </h4>
+      <h5 class="text-right">{{ product.price|intcomma }} руб.</h5>
+      <p class="card-text">{{ product.description|safe|truncatechars:80 }}</p>
+    </div>
+    <div class="text-right pr-2 pb-2">
+      {% if user.is_authenticated %} 
+        <form action="{% url 'ecomapp:add_to_cart'%}" method="POST" class="product-adding-quantity">
+            {% csrf_token %}
+            <input type="hidden" value="1" class="cart-item-quantity-in-product cart-item-quantity-default-1">
+            <button type="submit" class="btn add-to-cart-btn btn-sm ml-3" data-slug='{{ product.slug }}'>
+            В корзину<img src="{% static 'img/shopping-cart.png' %}" class="shopping-cart-icon-in-btn">
+            </button>
+        </form>
+      {% else %}
+        <button class="btn add-to-cart-btn btn-sm" data-slug='{{ product.slug }}' data-toggle="modal" data-target="#exampleModalCenter">
+          В корзину<img src="{% static 'img/shopping-cart.png' %}" class="shopping-cart-icon-in-btn">
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Необходима авторизация !</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body text-center">
+                <p>Заказывать и добавлять товары в корзину могут только авторизованные пользователи. Пожалуйста, <a href="{% url 'account_signup' %}?next=/">зарегистрируйтесь</a> или <a href="{% url 'account_login' %}?next=/">войдите</a> в свой аккаунт для продолжения.</p>
+              </div>
+              <div class="modal-footer">
+                <a href="{% url 'account_login' %}?next=/" class="btn btn-secondary close-modal-btn">Войти</a>
+                <a href="{% url 'account_signup' %}?next=/" class="btn btn-secondary close-modal-btn">Зарегистрироваться</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    <!--
+    <div class="card-footer">
+      <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+    </div>
+	-->
+  </div>
+</div>
+

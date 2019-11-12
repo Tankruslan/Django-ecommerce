@@ -1,0 +1,38 @@
+{% extends "ecomapp/base.html" %}
+
+
+{% block page_content %}
+	<h2 class="text-center">Ваш предварительный заказ:</h2>
+	<br>
+	<div class="table-responsive">
+		<table class="table table-striped">
+		  <thead>
+		    <tr>
+		      <th class="text-center" scope="col">Товар</th>
+		      <th class="text-center" scope="col">Количество, шт.</th>
+		      <th class="text-center" scope="col">Стоимость за единицу, руб.</th>
+		      <th class="text-center" scope="col">Общая стоимость, руб.</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+	    	{% for item in cart.items.all %}
+		    	<tr>
+		    		<td class="text-center">{{ item.product.title }}</td>
+		    		<td class="text-center">{{ item.quantity }}</td>
+		    		<td class="text-center">{{ item.item_cost }}</td>
+		    		<td class="text-center">{{ item.all_items_cost }}</td>
+		    	</tr>	
+	    	{% endfor %}
+	    	<tr class="cart-order-total-price">
+	    		<td></td>
+	    		<td></td>
+	    		<td class="text-center"><strong>Итого:</strong></td>
+	    		<td class="text-center"><strong>{{ cart.cart_total_cost }} руб.</strong></td>
+	    	</tr>
+		  </tbody>
+		</table>
+	</div>
+	<p class="text-right">
+		<a href="{% url 'ecomapp:create_order' %}" class="btn btn-success">Оформить заказ</a>
+	</p>
+{% endblock page_content %}

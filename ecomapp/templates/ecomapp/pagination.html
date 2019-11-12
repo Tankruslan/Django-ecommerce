@@ -1,0 +1,37 @@
+{% if products.paginator.num_pages > 1 %}
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+    	{% if products.has_previous %}
+    		<li class="page-item">
+    			<a class="page-link" href="?page=1">
+    				<i class="fas fa-angle-double-left"></i>
+    			</a>
+    		</li>
+    		<li class="page-item">
+  	      <a class="page-link" href="?page={{ products.previous_page_number }}" aria-label="Previous">
+  	        <i class="fas fa-angle-left"></i>
+  	      </a>
+  	    </li>
+    	{% endif %}
+    	{% for num in products.paginator.page_range %}
+    		{% if products.number == num %}
+    			<li class="page-item"><a class="page-link" href="#"><strong>{{ num }}</strong></a></li>
+    		{% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+    			<li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+    		{% endif %}
+      {% endfor %}
+      {% if products.has_next %}
+      	<li class="page-item">
+  	      <a class="page-link" href="?page={{ products.next_page_number }}" aria-label="Next">
+  	        <i class="fas fa-angle-right"></i>
+  	      </a>
+  	    </li>
+  	    <li class="page-item">
+  	    	<a class="page-link" href="?page={{ products.paginator.num_pages }}">
+  	    		<i class="fas fa-angle-double-right"></i>
+  	    	</a>
+  	    </li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}

@@ -1,0 +1,16 @@
+{% extends "ecomapp/base.html" %}
+{% load static %}
+
+
+{% block page_content %}
+	{% include "ecomapp/slider.html" %}
+	<hr class="mb-5">
+	<div class="row">
+	    {% for product in products %}
+	    	{% include "ecomapp/product_item.html" %}
+	    {% endfor %}
+	</div>
+	{% include "ecomapp/pagination.html" %}
+{% endblock page_content %}
+
+

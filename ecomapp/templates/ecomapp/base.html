@@ -1,0 +1,304 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>BestShop</title>
+
+  <!-- Bootstrap 4 -->
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+  <script src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous">
+
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous">
+  </script>
+
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous">
+  </script>
+
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/c61b42580a.js"></script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Rajdhani&display=swap" rel="stylesheet">
+
+  <!-- Moment.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js" integrity="sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=" crossorigin="anonymous"></script>
+  <script src='{% static "js/bootstrap-datepicker.ru.js" %}'></script>
+
+  <!-- Tempus Dominus Bootstrap 4 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" integrity="sha256-XPTBwC3SBoWHSmKasAk01c08M6sIA5gF5+sRxqak2Qs=" crossorigin="anonymous" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous">
+  </script>
+
+  <!-- Include Cloud Zoom JavaScript -->
+  <script type="text/javascript" src="{% static 'js/cloudzoom.js' %}"></script>
+  
+  <!-- Include Thumbelina JavaScript -->
+  <script type="text/javascript" src="{% static 'js/thumbelina.js' %}"></script>
+
+  <!-- Include Cloud Zoom CSS -->
+  <link href="{% static 'css/cloudzoom.css' %}" type="text/css" rel="stylesheet" />
+  
+  <!-- Include Thumbelina CSS -->
+  <link href="{% static 'css/thumbelina.css' %}" type="text/css" rel="stylesheet" />
+
+  <!-- Include Number CSS -->
+  <link rel="stylesheet" href="{% static 'css/number.css' %}">
+
+  <!-- Include Number JS -->
+  <script src='{% static "js/number.js" %}'></script>
+
+  <!-- Include jQuery cookie -->
+  <script src='{% static "js/jquery.cookie.js" %}'></script>
+
+  <!-- Custom styles for this template -->
+  <link rel="stylesheet" href="{% static 'css/shop-homepage.css' %}">
+
+  <!-- Main custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand site-name" href="/">Best Shop</a>
+      <!--{% if not request.get_full_path == '/' %}
+        <div class="dropdown">
+          <button class="btn dropdown-toggle categoty-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Категории
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {% for category in categories %}
+              <a class="dropdown-item" href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}-->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          {% if user.is_authenticated %}
+            <!--
+            <li class="nav-item authentication-navs hello-user d-flex">
+              <a class="nav-link">
+                {% if not request.user.first_name %}
+                  Здравствуйте, {{ request.user }}
+                {% else %}
+                  Здравствуйте, {{ request.user.first_name }}
+                {% endif %}
+              </a>
+            </li>
+            -->
+            <li class="nav-item authentication-navs account-nav d-flex">
+              <a class="nav-link" href="{% url 'ecomapp:account' %}">Профиль</a>
+            </li>
+            <li class="nav-item authentication-navs d-flex">
+              <a class="nav-link" href="{% url 'ecomapp:logout' %}">Выйти</a>
+            </li>
+          {% else %}
+            <li class="nav-item authentication-navs d-flex">
+              <a class="nav-link" href="{% url 'account_login' %}">Войти</a>
+            </li>
+            <li class="nav-item authentication-navs d-flex">
+              <a class="nav-link" href="{% url 'account_signup' %}">Регистрация</a>
+            </li>
+          {% endif %}
+          <li class="nav-item search-li d-flex">
+            <form class="form-inline" method="GET" action="{% url 'ecomapp:base' %} ">
+              <input class="form-control-sm mr-sm-2" type="search" placeholder="Введите ваш запрос" aria-label="Search" name="search">
+              <button class="btn add-to-cart-btn-style search-btn my-2 my-sm-0 btn-sm" type="submit">
+                <img src="{% static 'img/search.png' %} " class="search-icon">
+              </button>
+            </form>
+          </li>
+          <li class="nav-item d-flex">
+            <a class="nav-link shopping-cart-link" href="{% url 'ecomapp:cart' %}">
+              <img src="{% static 'img/shopping-cart.png' %}" class="shopping-cart-icon"> 
+              <span class="badge badge-light" id="cart_count">
+                {% if not request.session.total %}
+                  0
+                {% else %}
+                  {{ request.session.total }}
+                {% endif %}
+              </span>
+            </a>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </nav>
+  <!-- End Navigation -->
+
+
+  <!-- Page Content -->
+  <div class="container main-container">
+    {% include "ecomapp/messages.html" %}
+    <div class="row justify-content-between">
+
+      {% include "ecomapp/left_sidebar.html" %}
+      
+      <div class="col-lg-9 my-5 text-center">
+        {% block page_content %}
+    
+        {% endblock page_content %}
+      </div>
+    </div>
+  </div>
+  <!-- End Page Content -->
+
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Best Shop 2019</p>
+    </div>
+  </footer>
+  <!-- End Footer -->
+
+  {% block page_scripts %}
+    
+  {% endblock page_scripts %}
+
+  <!-- Adding items to cart -->
+  <script>
+    $(document).ready(function(){
+      $('.add-to-cart-btn').on('click', function(e){
+        e.preventDefault()
+        product_slug = $(this).attr('data-slug')
+        quantity = $('.cart-item-quantity-in-product').val()
+        csrf_token = $('.product-adding-quantity [name="csrfmiddlewaretoken"]').val();
+        data = {
+          product_slug: product_slug,
+          quantity: quantity,
+          csrfmiddlewaretoken: csrf_token,
+        }
+        $.ajax({
+          type : "POST",
+          url : "{% url 'ecomapp:add_to_cart' %}",
+          data : data,
+          success: function(data){
+            $('#cart_count').html(data.cart_total)
+          }
+        })
+      });
+    });
+  </script>
+
+  <!-- Removing items from cart -->
+  <script>
+    $(document).ready(function(){
+      $('.remove-from-cart-btn').on('click', function(e){
+        e.preventDefault()
+        product_slug = $(this).attr('data-slug')
+        item_product_id = $(this).attr('data-id')
+        data = {
+          product_slug: product_slug
+        }
+        $.ajax({
+          type : "GET",
+          url : "{% url 'ecomapp:remove_from_cart' %}",
+          data : data,
+          success: function(data){
+            $('#cart_count').html(data.cart_total)
+            $('.cart-item-'+item_product_id).html('')
+            $('#cart-total-price').children('strong').html(
+              parseFloat(data.cart_total_price).toLocaleString(undefined,
+                {'minimumFractionDigits':2,'maximumFractionDigits':2}) + ' руб.'
+              )
+            if(parseInt(data.cart_total_price) == 0){
+              $('.my-cart').html('<img src="{% static 'img/empty-cart.png' %}" class="empty-cart"> <h3 class="text-center my-5">Ваша корзина пуста!</h3> <p>Но это легко поправить! <a href="{% url 'account_login' %}?next=/">Войдите</a> в свой аккаунт или <a href="{% url 'account_signup' %}?next=/">зарегстрируйтесь </a> и отправлятесь за <a href="/">покупками</a>! После оформления ваш заказ отобразится в <a href="{% url 'ecomapp:account' %}">личном кабинете</a> и вы сможете посмотреть детали заказа.</p>')
+            }
+          }
+        })
+      });
+    });
+  </script>
+
+  
+
+  <script>
+    $('.cart-item-quantity-default-1').parent('.number-style').addClass('d-none');
+  </script>
+
+  <!--  Tuning checkout fields and initializing datetimepicker -->
+  <script>
+    $(document).ready(function(){
+      $(function () {
+        $("#div_id_date_delivery").children('div').addClass('input-group date');
+        $("#div_id_date_delivery").children('div').attr('data-target-input', 'nearest');
+        $("#div_id_date_delivery").children('div').attr('id', 'datetimepicker1');
+        $('<div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker"><div class="input-group-text"><i class="fa fa-calendar"></i></div></div>').insertBefore('#hint_id_date_delivery')
+        $("#datetimepicker1").datetimepicker({
+          format: 'DD/MM/YYYY HH:mm',
+          language: 'ru',
+          minDate: new Date,
+        });
+      });
+    });
+  </script>
+  <script>
+    $(function(){
+        $("#id_buying_type").on('click', function(){
+          buying_type = $(this).val()
+          if(buying_type == "Доставка"){
+            $("#div_id_address").css("opacity", "1")
+          }
+          else{
+            $("#div_id_address").css("opacity", "0")
+          }
+        })
+    });
+  </script>
+  <script>
+    $(function(){
+      $('#div_id_login').children('label').html('Имя пользователя или e-mail*')
+    });
+  </script>
+  <script>
+    $(function(){
+      $('#div_id_image').children('label').html('');
+      $('<div id="avatar_overlay"></div>').insertBefore('#div_id_image')
+      $('#div_id_image').attr('title', 'Сменить аватар');
+      $('#div_id_image').hover(
+        function() {
+          $('#avatar_overlay').toggleClass('avatar-overlay-opacity');
+        }
+      );
+    });
+  </script>
+  <script type = "text/javascript">
+      CloudZoom.quickStart();
+      
+      // Initialize the slider.
+      $(function(){
+          $('#slider1').Thumbelina({
+              $bwdBut:$('#slider1 .left'), 
+              $fwdBut:$('#slider1 .right')
+          });
+      });   
+  </script>
+
+  
+
+</body>
+
+</html>

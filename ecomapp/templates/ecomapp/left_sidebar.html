@@ -1,0 +1,8 @@
+<div class="col-lg-2 left-sidebar my-5 d-flex">
+	<div class="list-group my-5">
+	  <h3 class="mb-4 filter">Фильтры:</h3>
+	  {% for category in categories %}
+	    <a href="{{ category.get_absolute_url }}" class="list-group-item filter-value">{{ category.name }}</a>
+	  {% endfor %}
+	</div>  
+</div>
